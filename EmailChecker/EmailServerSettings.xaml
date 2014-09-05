@@ -1,0 +1,87 @@
+﻿<UserControl x:Class="EmailChecker.EmailServerSettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModel="clr-namespace:EmailChecker.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="500" d:DataContext="{d:DesignInstance Type=viewModel:EmailServerSettingViewModel}">
+    <Grid>
+        <Border Margin="10,10,10,10" BorderBrush="Red" BorderThickness="1,1,1,1" CornerRadius="8,8,8,8">
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
+                    <GradientStop Color="DarkSeaGreen" Offset="0"/>
+                    <GradientStop Color="#FFFFFFFF" Offset="0.567"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="{x:Type TextBox}">
+                        <Setter Property="Margin" Value="5,0,0,4" />
+                    </Style>
+                    <Style TargetType="{x:Type CheckBox}">
+                        <Setter Property="Margin" Value="5,0,0,4" />
+                    </Style>
+                    <Style TargetType="{x:Type PasswordBox}">
+                        <Setter Property="Margin" Value="5,0,0,4" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                    <TextBlock Text="Pop3 Server:" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="0"/>
+                    <TextBox x:Name="txtPop3Server" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1" Width="150" Text="{Binding Pop3Server}"/>
+                    <TextBlock Text="Port Number:" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="0"/>
+                    <TextBox x:Name="txtPortNumber" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="1" Width="50" Text="{Binding Pop3ServerPortNumber}"/>
+                    <CheckBox x:Name="cbUseSslCheckBox" Content="Use SSL" Grid.Row="2" Grid.Column="1" IsChecked="{Binding UseSSLForPop3Server}"/>
+                    <CheckBox x:Name="cbSaveServerCopy" Content="Save a copy to server" Grid.Row="3" Grid.Column="1" IsChecked="{Binding SaveCopyInServer}"/>
+                    <TextBlock Text="User Name:" HorizontalAlignment="Right" Grid.Row="4" Grid.Column="0" />
+                    <TextBox x:Name="txtUserName" HorizontalAlignment="Left" Grid.Row="4" Grid.Column="1" Width="100" Text="{Binding UserName}"/>
+                    <TextBlock Text="Password:" HorizontalAlignment="Right" Grid.Row="5" Grid.Column="0"/>
+                    <!--<PasswordBox x:Name="txtPassword"  HorizontalAlignment="Left" Grid.Row="5" Grid.Column="1" Width="100" />-->
+                    <TextBox x:Name="txtPassword"  HorizontalAlignment="Left" Grid.Row="5" Grid.Column="1" Width="100" Text="{Binding Password}" />
+                    <CheckBox x:Name="cbEnforceCheckMail" Content="Enforce check email first before send mail:" Grid.Row="6" Grid.Column="1" IsChecked="{Binding EnforceCheckMailFirst}"/>
+                    <TextBlock Text="SMTP Server:" HorizontalAlignment="Right" Grid.Row="7" Grid.Column="0" />
+                    <TextBox x:Name="txtSMTPServer" HorizontalAlignment="Left" Grid.Row="7" Grid.Column="1" Width="150" Text="{Binding SMTPServer}"/>
+                    <TextBlock Text="Port Number:" HorizontalAlignment="Right" Grid.Row="8" Grid.Column="0"/>
+                    <TextBox x:Name="txtSMTPPortNumber" HorizontalAlignment="Left" Grid.Row="8" Grid.Column="1" Width="50" Text="{Binding SMTPServerPortNumber}"/>
+                    <CheckBox x:Name="cbUseSMTPSslCheckBox" Content="Use SSL for SMTP" Grid.Row="9" Grid.Column="1" IsChecked="{Binding UseSSLForSMTPServer}"/>
+                    <TextBlock Text="Alarm Sound:" HorizontalAlignment="Right" Grid.Row="10" Grid.Column="0"/>
+                    <TextBox x:Name="txtAlarmSound" HorizontalAlignment="Left" Grid.Row="10" Grid.Column="1" Width="150" Text="{Binding AlarmFilePath}" />
+                    <TextBlock Text="Time to check email (ms):" HorizontalAlignment="Right" Grid.Row="11" Grid.Column="0"/>
+                    <TextBox x:Name="txtEmailCheckInterval" HorizontalAlignment="Left" Grid.Row="11" Grid.Column="1" Width="50" Text="{Binding EmailCheckInterval}"/>
+                    <TextBlock Text="Record Compare Time (ms):" HorizontalAlignment="Right" Grid.Row="12" Grid.Column="0"/>
+                    <TextBox x:Name="txtRecordCompareTime" HorizontalAlignment="Left" Grid.Row="12" Grid.Column="1" Width="50" Text="{Binding RecordCompareTime}"/>
+                    <TextBlock Text="Acknowledgement Waiting Time (ms):" HorizontalAlignment="Right" Grid.Row="13" Grid.Column="0"/>
+                    <TextBox x:Name="txtAcknowledgementWaitingTime" HorizontalAlignment="Left" Grid.Row="13" Grid.Column="1" Width="50" Text="{Binding AcknowledgementWaitingTime}"/>
+                    <TextBlock Text="Log File Path:" HorizontalAlignment="Right" Grid.Row="14" Grid.Column="0"/>
+                    <TextBox x:Name="txtLogFilePath" HorizontalAlignment="Left" Grid.Row="14" Grid.Column="1" Width="150" Text="{Binding LogFilePath}" />
+                    <CheckBox x:Name="cbSendEmailWhenAlarmed" Content="Send Email when alarm initaled" Grid.Row="15" Grid.Column="1" IsChecked="{Binding SendEmailWhenAlarmInitiated}"/>
+                    <TextBlock Text="Email address (use comma as multiple):" HorizontalAlignment="Right" Grid.Row="16" Grid.Column="0" />
+                    <TextBox x:Name="txtEmailAddresses" HorizontalAlignment="Left" Grid.Row="16" Grid.Column="1" Width="250" Text="{Binding EmailAddresses}"/>
+                    <Button x:Name="Save" Content="Save" Grid.Row="17" Grid.ColumnSpan="2" Width="50" Command="{Binding SaveServerSettingsCommand}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
