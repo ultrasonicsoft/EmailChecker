@@ -1,0 +1,126 @@
+﻿Windows xp/7/8/8.1 software with the following functions:
+
+((Make sure it works on windows 8))
+
+1. after chose [Option] button / menu item:
+
+Pop3 server = 
+Port number = 
+use SSL or not = Yes/No 
+Save a copy in the server (after received a message) = Yes/No
+Username & password =
+Enfore Check email firt before send email = yes/no
+SMTP Server =
+Port Number =
+use SSL or not = yes/no
+Alarm sound = "C:\ding.mp3"
+Time to check Email in miliseconds = 30000
+Record_Compare_Time in miliseconds = 70000
+Acknowledgement_Waiting_Time in miliseconds = 0 (Use zero for unlimited)
+Log file address = C:\logfile.txt
+Send Email when alarm initaled = Yes/No
+If above is yes, whats the email address = abc@abc.com, efg@efg.com (can use comma as multiple)
+
+
+2. the software's job is to check e-mail every 30 seconds (Time to check Email).
+
+3. received emails will contain main body same as subject. sometimes the subject may be truncated by SMTP server, so please use main body. Examples of main body message:
+
+70567 # 50571987 O 2014.08.13 05:02 B 2.50,EURUSD,1.3360,1.3260,0.000
+
+70567 # 50583035 O 2014.08.14 05:24 S 2.50,GBPJPY,171.091,172.280,0.000
+
+70567 # 50571987 C 2014.08.13 05:02 B
+2.50,EURUSD,1.3360,1.3330,0.000,2014.08.14 14:00,1.3370,0.60,0,237.50
+
+70567 # 50595286 C 2014.08.15 11:00 S
+0.80,GBPJPY,171.007,171.311,0.000,2014.08.15 11:45,171.160,0.00,0,-119.39
+
+String1: "70567", this is account number. Could be longer or shorter, always ends with a space. (When read this into internal variable, please abandon the space)
+String2: "#", separator. it is always "#" followed by a space. (abandon the space)
+String3: "50571987", order number. always ends with a space. (abandon the
+space)
+String4: "O", means "Open". Could be "O" or "C" (means "close"). always ends with a space. (abandon the space)
+String5: "2014.08.13". order open date. always ends with a space. (abandon the space)
+String6: "05:02", order open time. always ends with a space. (abandon the
+space)
+String7: "B", means "Buy", could be "S" which means "SELL". this is the direction of the said order. always ends with a space. (abandon the space)
+String8: "2.50". size of the order. ranges from 0.01 to 100.00. always ends with a comma. (abandon the comma)
+String9: "EURUSD", symbol of the order. could be longer, e.g. "EURUSDpro".
+always ends with a comma. (abandon the comma)
+String10: "1.3360", order's open price. could be longer, e.g. "113.251".
+always ends with a comma. (abandon the comma)
+String11: "1.3260", order's stop loss. could be longer, e.g. "113.251".
+always ends with a comma. (abandon the comma)
+String12: "0.000", order's take profit. could be longer, e.g. "113.251".
+this part is the end of the main body text if String4 is "O".
+
+[When String4 is "C"]
+String12:  "0.000", order's take profit. could be longer, e.g. "113.251".
+ends with a comma. (abandon the comma)
+String13: "2014.08.14", order close date. ends with a space. (abandon the
+space)
+String14: "14:00", order close time. ends with a comma. (abandon the comma)
+String15: "171.160", order close price. ends with a comma. (abandon the
+comma)
+String16: "0.00", order swap. ends with a comma. (abandon the comma)
+String17: "0", order commission. ends with a comma. (abandon the comma)
+String18: "237.50", order profit. this is the end of main body text.
+
+4. please reserve space to keep at least 20 records (one record = one email main body text)
+   give each record a index number and note the date and time we received the message.
+
+5. compare and alarm and send email if options settings is yes
+5.1 if there is no record: check email every 30 seconds.
+5.2 if there is one record: if the one record is older than 70 seconds (Record_Compare_Time) then play the mp3 file (send email if options settings is yes) and show popup warning box to describe the reason:
+"Account 1234 opened an order.(show details) No message from the other
+    account." or "Account 1234 closed an order.(show details) No message from the other account."
+    When "Acknowledgement" button is pressed, stop playing the mp3 file
+
+5.3 if there are two records: compare the two records and see if they are similar, or totally different.
+    if two records are exactly the same, then it is a duplicated message.
+delete the later one.
+    if two records contains same account number (String1), do not compare them. We only compare messages from different accounts. (there are two accounts in total)
+
+String1: "70567". this must be different.
+String2: "#". this must be the same.
+String3: "50571987". this must be different.
+String4: "O". this must be the same.
+String5: "2014.08.13". this must be the same.
+String6: "05:02". allow 2 minutes difference.
+String7: "B". must be the same.
+String8: "2.50". must be the same.
+String9: "EURUSD". first 6 characters must the same.
+String10: "1.3360". allow difference < 0.0010. for "175.27", allow difference <0.10.
+String11: "1.3260". same as above.
+String12:  "0.000". same as above.
+String13: "2014.08.14". must be the same.
+String14: "14:00". allow 2 minutes difference.
+String15: "171.160".  allow difference < 0.10. for "1.2730", allow difference <0.0010.
+String16: "0.00". can be different.
+String17: "0". can be different.
+String18: "237.50". can be different.
+
+    if two records are similar (by and large the same), then label the records as "compared".
+
+    if two records are different, then alert (send email if options settings is yes) with detailed information and play the mp3 file.
+
+    if two records are different, then one of them may match a new message; so when a new message arrives, compare it with two existing
+(different) records.
+
+    When "Acknowledgement" button is pressed, stop playing the mp3 file.
+
+5.4 If records number is bigger than 20, then delete earlier messages to make space.
+
+5.5 If the interface panel is big, then show all records received on the panel.
+    if the interface panel is small, then we need a button "show records"
+to give a big windows showing all records.
+    Near each un-compared records there should be a button named "check".
+The operator may use this button to check a record manually. do not compare checked records.
+
+5.6 Totally debugging Log file: Save all the messages/actions received in a log file (even checking or sending email). Example If operator pressed "acknowledgement" button or "check" button, save the actions in the log file, with date and time.Every single action.
+
+
+The overall interface should be in English , easy to see, user friendly , clear and clean. 
+
+

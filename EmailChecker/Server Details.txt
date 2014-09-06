@@ -1,0 +1,11 @@
+﻿Your account forex@icentel.com has been setup. In 
+your e-mail program, use:
+
+Username:	forex@icentel.com
+Password:	555888
+Pop3 Server:	mail.icentel.com
+Smtp Server:	mail.icentel.com
+
+incoming pop3 standard is 110
+Profile picture
+and outgoing server smtp is port 25
