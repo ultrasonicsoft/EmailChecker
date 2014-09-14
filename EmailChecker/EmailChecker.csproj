@@ -57,8 +57,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converter\StatusConverter.cs" />
     <Compile Include="EmailHelper\EmailHelper.cs" />
     <Compile Include="Model\MessageEntity.cs" />
+    <Compile Include="Model\OrderEntity.cs" />
     <Compile Include="Properties\Server.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -68,11 +70,11 @@
     <Compile Include="ViewModel\EmailServerSettingViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
-    <Page Include="EmailServerSettings.xaml">
+    <Page Include="Views\EmailServerSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="EmailChecker.xaml">
+    <Page Include="Views\EmailChecker.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -80,10 +82,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="EmailServerSettings.xaml.cs">
+    <Compile Include="Views\EmailServerSettings.xaml.cs">
       <DependentUpon>EmailServerSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EmailChecker.xaml.cs">
+    <Compile Include="Views\EmailChecker.xaml.cs">
       <DependentUpon>EmailChecker.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

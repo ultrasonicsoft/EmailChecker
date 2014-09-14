@@ -72,13 +72,13 @@ String18: "237.50", order profit. this is the end of main body text.
 
 5. compare and alarm and send email if options settings is yes
 5.1 if there is no record: check email every 30 seconds.
-5.2 if there is one record: if the one record is older than 70 seconds (Record_Compare_Time) then play the mp3 file (send email if options settings is yes) and show popup warning box to describe the reason:
+5.2 if there is one record: if the one record is older than 70 seconds (Record_Compare_Time) then play the mp3 file (send email if options settings is yes) 
+and show popup warning box to describe the reason:
 "Account 1234 opened an order.(show details) No message from the other
     account." or "Account 1234 closed an order.(show details) No message from the other account."
     When "Acknowledgement" button is pressed, stop playing the mp3 file
 
-5.3 if there are two records: compare the two records and see if they are similar, or totally different.
-    if two records are exactly the same, then it is a duplicated message.
+5.3 if there are two records: compare the two records and see if they are similar, or dfz s a duplicated message.
 delete the later one.
     if two records contains same account number (String1), do not compare them. We only compare messages from different accounts. (there are two accounts in total)
 
@@ -118,9 +118,56 @@ to give a big windows showing all records.
     Near each un-compared records there should be a button named "check".
 The operator may use this button to check a record manually. do not compare checked records.
 
-5.6 Totally debugging Log file: Save all the messages/actions received in a log file (even checking or sending email). Example If operator pressed "acknowledgement" button or "check" button, save the actions in the log file, with date and time.Every single action.
+5.6 Totally debugging Log file: Save all the messages/actions received in a log file (even checking or sending email). 
+Example If operator pressed "acknowledgement" button or "check" button, save the actions in the log file, with date and time.Every single action.
 
 
 The overall interface should be in English , easy to see, user friendly , clear and clean. 
 
 
+**********************************
+1. 70 sec from time we show in our application or on email server? as we pull email after 3 sec
+
+[answer] from time we recieve it; not the time on the email server.
+
+2. when application starts, there may be more than 2 records on server. so how to handle below condition
+
+"5.3 if there are two records: compare the two records and see if they are similar, or totally different.
+
+if two records are exactly the same, then it is a duplicated message.
+delete the later one."
+
+So should application compare two records based on sequence?
+
+[answer] the application needs to compare several (unmatched) records, unless the operator
+labeled it as "checked"
+
+
+3. Below requirement:
+
+"When "Acknowledgement" button is pressed, stop playing the mp3 file"
+
+What should be done with that record after acknowledgement? Should we keep it or delete?
+
+[answer] please keep the record and label its status as "Acknowledged"
+
+
+4. below statement:
+
+"if two records are similar (by and large the same), then label the records as "compared"."
+
+if there are many such similar records like r1=r2 and r3=r4, how to show
+r1 is
+compared with r2 and so r3 with r4?
+
+[answer] please label all these records as "compared".
+
+5. below statement:
+
+"Near each un-compared records there should be a button named "check".
+
+The operator may use this button to check a record manually. do not compare checked records."
+
+So whenever there will be new record fetched from server, it will be in state of "unchecked"? or when new record arrive and its matching records didn't find, we will show "check" button?
+
+[answer] if a message is younger than 70 seconds since it is recieved in our application, do not show the "check" button. if it is older than 70 seconds and uncompared, show the "check" button please.

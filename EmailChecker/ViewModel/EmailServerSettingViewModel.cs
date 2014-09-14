@@ -284,28 +284,6 @@ namespace EmailChecker.ViewModel
             LastUpdatedOn = "Last updated on: " + DateTime.Now.ToString();
         }
 
-        private void CheckNewMail()
-        {
-            //try
-            //{
-            //    int counter = 0;
-            //    for (int messageIndex = pop3Client.GetMessageCount(); messageIndex >= 1; messageIndex--)
-            //    {
-            //        var mailMessage = pop3Client.GetMessage(messageIndex).ToMailMessage();
-            //        AllEmails.Add(new MessageEntity
-            //        {
-            //            Number = messageIndex,
-            //            Subject = mailMessage.Subject,
-            //            Body = mailMessage.Body,
-            //            DateSent = pop3Client.GetMessage(messageIndex).Headers.DateSent
-            //        });
-            //    }
-            //    LastUpdatedOn = DateTime.Now.ToString();
-            //}
-            //catch (Exception exception)
-            //{
-            //}
-        }
         #endregion
 
         #region Methods
@@ -334,6 +312,8 @@ namespace EmailChecker.ViewModel
             Properties.Server.Default.Save();
 
             emailHelper.InitializePop3Client(Pop3Server,Pop3ServerPortNumber, UseSSLForPop3Server, UserName, Password);
+
+            MessageBox.Show("Settings updated!", "Email Checker", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         #endregion
     }
