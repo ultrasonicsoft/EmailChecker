@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Threading;
 using EmailChecker.Model;
 using OpenPop.Mime;
@@ -15,6 +16,7 @@ namespace EmailChecker.EmailHelper
     internal class EmailHelper
     {
         private Pop3Client pop3Client;
+        private MediaPlayer mediaPlayer = new MediaPlayer();
 
         internal void InitializePop3Client(string pop3Server, string pop3ServerPortNumber, bool useSSLForPop3Server,
             string UserName, string Password)
@@ -38,7 +40,7 @@ namespace EmailChecker.EmailHelper
             {
                 if(messageIndex>3)
                     break;
-
+                
                 string currentUidOnServer = uids[messageIndex];
                 if (!seenUids.Contains(currentUidOnServer))
                 {
@@ -81,6 +83,9 @@ namespace EmailChecker.EmailHelper
 
                     // Add the uid to the seen uids, as it has now been seen
                     seenUids.Add(currentUidOnServer);
+
+                    mediaPlayer.Open(new Uri(Properties.Server.Default.AlarmFilePath));
+                    mediaPlayer.Play();
                 }
             }
 

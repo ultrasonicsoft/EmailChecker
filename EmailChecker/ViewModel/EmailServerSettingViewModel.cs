@@ -28,6 +28,7 @@ namespace EmailChecker.ViewModel
         private string smtpServerPortNumber;
         private bool useSSLForSMTPServer;
         private string alarmFilePath;
+        private string alertFilePath;
         private string emailCheckInterval;
         private string recordCompareTime;
         private string acknowledgementWaitingTime;
@@ -166,6 +167,17 @@ namespace EmailChecker.ViewModel
                 NotifyPropertyChangedEvent("AlarmFilePath");
             }
         }
+
+        public string AlertFilePath
+        {
+            get { return alertFilePath; }
+            set
+            {
+                alertFilePath = value;
+                NotifyPropertyChangedEvent("AlertFilePath");
+            }
+        }
+
         public string EmailCheckInterval
         {
             get { return emailCheckInterval; }
@@ -253,6 +265,7 @@ namespace EmailChecker.ViewModel
             SMTPServerPortNumber = Properties.Server.Default.SMTPServerPortNumber;
             UseSSLForSMTPServer = Properties.Server.Default.UseSSLForSMTPServer;
             AlarmFilePath = Properties.Server.Default.AlarmFilePath;
+            AlertFilePath = Properties.Server.Default.AlertFilePath;
             EmailCheckInterval = Properties.Server.Default.EmailCheckInterval;
             RecordCompareTime = Properties.Server.Default.RecordCompareTime;
             AcknowledgementWaitingTime = Properties.Server.Default.AcknowledgementWaitingTime;
@@ -302,6 +315,7 @@ namespace EmailChecker.ViewModel
             Properties.Server.Default.SMTPServerPortNumber = SMTPServerPortNumber;
             Properties.Server.Default.UseSSLForSMTPServer = UseSSLForSMTPServer;
             Properties.Server.Default.AlarmFilePath = AlarmFilePath;
+            Properties.Server.Default.AlertFilePath = AlertFilePath;
             Properties.Server.Default.EmailCheckInterval = EmailCheckInterval;
             Properties.Server.Default.RecordCompareTime = RecordCompareTime;
             Properties.Server.Default.AcknowledgementWaitingTime = AcknowledgementWaitingTime;

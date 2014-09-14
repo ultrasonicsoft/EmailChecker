@@ -226,5 +226,17 @@ namespace EmailChecker.Properties {
                 this["EmailAddresses"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AlertFilePath {
+            get {
+                return ((string)(this["AlertFilePath"]));
+            }
+            set {
+                this["AlertFilePath"] = value;
+            }
+        }
     }
 }

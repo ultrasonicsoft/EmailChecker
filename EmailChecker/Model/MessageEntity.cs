@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace EmailChecker.Model
@@ -20,6 +21,7 @@ namespace EmailChecker.Model
 
     public  class MessageEntity :INotifyPropertyChanged
     {
+        MediaPlayer player = new MediaPlayer();
         public int Number { get; set; }
         public string Subject { get; set; }
         public string Body { get; set; }
@@ -56,9 +58,23 @@ namespace EmailChecker.Model
         {
            // MessageBox.Show("Record Compare timer");
             Status = MessageStatus.Alert;
-            MessageBox.Show("Account 1234 opened an order.(show details) No message from the other account.","Email Checke",MessageBoxButton.OK);
+
+            player.Open(new Uri(Properties.Server.Default.AlertFilePath, UriKind.Absolute));
+            player.MediaEnded +=player_MediaEnded;
+            player.Play();
+            string message =
+                string.Format("Account {0} opened an order.(show details) No message from the other account.",
+                    OrderDetails.AccountNumber);
+            MessageBox.Show(message,"Email Check",MessageBoxButton.OK);
             Status = MessageStatus.Acknowledged;
             RecordCompareTimer.Stop();
+            player.Stop();
+        }
+
+        private void player_MediaEnded(object sender, EventArgs e)
+        {
+            player.Position = TimeSpan.Zero;
+            player.Play();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
