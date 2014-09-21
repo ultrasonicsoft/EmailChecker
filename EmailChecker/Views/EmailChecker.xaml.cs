@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using EmailChecker.Model;
 using OpenPop.Mime;
 using OpenPop.Pop3;
 
@@ -26,6 +27,13 @@ namespace EmailChecker
         public MainWindow()
         {
             InitializeComponent();
+        }
+        void CheckRecord_Click(object sender, RoutedEventArgs e)
+        {
+            //http://stackoverflow.com/questions/15291864/how-to-get-current-element-in-wpf-datagrid-and-how-to-do-something-with-it
+
+            var selectedMessage = ((FrameworkElement)sender).DataContext as MessageEntity;
+            selectedMessage.Status = MessageStatus.Acknowledged;
         }
     }
 }

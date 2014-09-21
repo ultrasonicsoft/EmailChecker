@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Server>
+  <Pop3Server>mail.icentel.com</Pop3Server>
+  <Pop3ServerPortNumber>110</Pop3ServerPortNumber>
+  <UseSSLForPop3Server>false</UseSSLForPop3Server>
+  <SaveCopyInServer>false</SaveCopyInServer>
+  <UserName>forex@icentel.com</UserName>
+  <Password>555888</Password>
+  <EnforceCheckMailFirst>true</EnforceCheckMailFirst>
+  <SMTPServer>mail.icentel.com</SMTPServer>
+  <SMTPServerPortNumber>25</SMTPServerPortNumber>
+  <UseSSLForSMTPServer>false</UseSSLForSMTPServer>
+  <AlarmFilePath>c:\Alert.mp3</AlarmFilePath>
+  <EmailCheckInterval>3000</EmailCheckInterval>
+  <RecordCompareTime>70000</RecordCompareTime>
+  <AcknowledgementWaitingTime>0</AcknowledgementWaitingTime>
+  <LogFilePath></LogFilePath>
+  <SendEmailWhenAlarmInitiated>false</SendEmailWhenAlarmInitiated>
+  <EmailAddresses></EmailAddresses>
+  <AlertFilePath></AlertFilePath>
+</Server>

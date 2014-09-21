@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
+using EmailChecker.ViewModel;
 
 namespace EmailChecker.Model
 {
@@ -19,7 +21,7 @@ namespace EmailChecker.Model
         Different
     }
 
-    public  class MessageEntity :INotifyPropertyChanged
+    public class MessageEntity : INotifyPropertyChanged
     {
         MediaPlayer player = new MediaPlayer();
         public int Number { get; set; }
@@ -42,39 +44,66 @@ namespace EmailChecker.Model
         public OrderEntity OrderDetails { get; set; }
 
         public DispatcherTimer RecordCompareTimer { get; set; }
-        
+
         public bool IsCompared { get; set; }
 
         public MessageEntity()
         {
-            RecordCompareTimer = new DispatcherTimer();
-            int acknowledgementTime = int.Parse(Properties.Server.Default.RecordCompareTime);
-            RecordCompareTimer.Interval = new TimeSpan(0, 0, 0, 0, acknowledgementTime);
-            RecordCompareTimer.Tick +=RecordCompareTimer_Tick;
+            try
+            {
+                RecordCompareTimer = new DispatcherTimer();
+                int acknowledgementTime = int.Parse(EmailServerSettingViewModel.CurrentServerSettings.RecordCompareTime);
+                RecordCompareTimer.Interval = new TimeSpan(0, 0, 0, 0, acknowledgementTime);
+                RecordCompareTimer.Tick += RecordCompareTimer_Tick;
 
-            Status = MessageStatus.New;
+                Status = MessageStatus.New;
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
         }
         private void RecordCompareTimer_Tick(object sender, EventArgs e)
         {
-           // MessageBox.Show("Record Compare timer");
-            Status = MessageStatus.Alert;
-
-            player.Open(new Uri(Properties.Server.Default.AlertFilePath, UriKind.Absolute));
-            player.MediaEnded +=player_MediaEnded;
-            player.Play();
-            string message =
-                string.Format("Account {0} opened an order.(show details) No message from the other account.",
+            try
+            {
+                // MessageBox.Show("Record Compare timer");
+                Status = MessageStatus.Alert;
+                if (File.Exists(EmailServerSettingViewModel.CurrentServerSettings.AlertFilePath))
+                {
+                    player.Open(new Uri(EmailServerSettingViewModel.CurrentServerSettings.AlertFilePath,
+                        UriKind.Absolute));
+                    player.MediaEnded += player_MediaEnded;
+                    player.Play();
+                }
+                string message =
+                string.Format("Account {0} opened an order. No message from the other account.",
                     OrderDetails.AccountNumber);
-            MessageBox.Show(message,"Email Check",MessageBoxButton.OK);
-            Status = MessageStatus.Acknowledged;
-            RecordCompareTimer.Stop();
-            player.Stop();
+                MessageBox.Show(message, "Email Check", MessageBoxButton.OK);
+                Status = MessageStatus.Acknowledged;
+                RecordCompareTimer.Stop();
+                if (File.Exists(EmailServerSettingViewModel.CurrentServerSettings.AlertFilePath))
+                {
+                    player.Stop();
+                }
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
         }
 
         private void player_MediaEnded(object sender, EventArgs e)
         {
-            player.Position = TimeSpan.Zero;
-            player.Play();
+            try
+            {
+                player.Position = TimeSpan.Zero;
+                player.Play();
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

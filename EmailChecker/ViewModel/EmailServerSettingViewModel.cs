@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using System.Xml.Serialization;
 using EmailChecker.Model;
 using OpenPop.Pop3;
 
@@ -43,13 +45,13 @@ namespace EmailChecker.ViewModel
         private string lastUpdatedOn;
 
         private List<string> seenUids;
- 
+
         public string LastUpdatedOn
         {
             get { return lastUpdatedOn; }
             set
             {
-                lastUpdatedOn = value; 
+                lastUpdatedOn = value;
                 NotifyPropertyChangedEvent("LastUpdatedOn");
             }
         }
@@ -61,6 +63,18 @@ namespace EmailChecker.ViewModel
             {
                 allEmails = value;
                 NotifyPropertyChangedEvent("AllEmails");
+            }
+        }
+
+        private bool showSettingDialog;
+
+        public bool ShowSettingDialog
+        {
+            get { return showSettingDialog; }
+            set
+            {
+                showSettingDialog = value;
+                NotifyPropertyChangedEvent("ShowSettingDialog");
             }
         }
 
@@ -248,53 +262,135 @@ namespace EmailChecker.ViewModel
             set { saveServerSettingsCommand = value; }
         }
 
+        private ICommand cancelServerSettingsCommand;
+
+        public ICommand CancelServerSettingsCommand
+        {
+            get { return cancelServerSettingsCommand; }
+            set { cancelServerSettingsCommand = value; }
+        }
+
         #endregion
+
+        private static ServerSettings currentServerSettings;
+
+        public static ServerSettings CurrentServerSettings
+        {
+            get { return currentServerSettings; }
+            set { currentServerSettings = value; }
+        }
+
         #region Constructor
         public EmailServerSettingViewModel()
         {
-            NewMailCheckerTimer = new DispatcherTimer();
+            try
+            {
+                NewMailCheckerTimer = new DispatcherTimer();
 
-            Pop3Server = Properties.Server.Default.Pop3Server;
-            Pop3ServerPortNumber = Properties.Server.Default.Pop3ServerPortNumber;
-            UseSSLForPop3Server = Properties.Server.Default.UseSSLForPop3Server;
-            SaveCopyInServer = Properties.Server.Default.SaveCopyInServer;
-            UserName = Properties.Server.Default.UserName;
-            Password = Properties.Server.Default.Password;
-            EnforceCheckMailFirst = Properties.Server.Default.EnforceCheckMailFirst;
-            SMTPServer = Properties.Server.Default.SMTPServer;
-            SMTPServerPortNumber = Properties.Server.Default.SMTPServerPortNumber;
-            UseSSLForSMTPServer = Properties.Server.Default.UseSSLForSMTPServer;
-            AlarmFilePath = Properties.Server.Default.AlarmFilePath;
-            AlertFilePath = Properties.Server.Default.AlertFilePath;
-            EmailCheckInterval = Properties.Server.Default.EmailCheckInterval;
-            RecordCompareTime = Properties.Server.Default.RecordCompareTime;
-            AcknowledgementWaitingTime = Properties.Server.Default.AcknowledgementWaitingTime;
-            LogFilePath = Properties.Server.Default.LogFilePath;
-            SendEmailWhenAlarmInitiated = Properties.Server.Default.SendEmailWhenAlarmInitiated;
-            EmailAddresses = Properties.Server.Default.EmailAddresses;
+                // Reading server setting from configuration file
+                ReadServerSettings();
 
-            NewMailCheckerTimer.Tick += NewMailCheckerTimer_Tick;
-            NewMailCheckerTimer.Interval = new TimeSpan(0, 0, 0, 0, int.Parse(emailCheckInterval));
+                // Set Log file path
+                LogHelper.LogFileName = currentServerSettings.LogFilePath;
 
-            SaveServerSettingsCommand = new RelayCommand(new Action<object>(SaveServerSettings));
+                LogHelper.WriteMessage("Read settings from setting. Populating setting objects..");
+                Pop3Server = currentServerSettings.Pop3Server;
+                Pop3ServerPortNumber = currentServerSettings.Pop3ServerPortNumber;
 
-            emailHelper = new EmailHelper.EmailHelper();
-            emailHelper.InitializePop3Client(pop3Server, Pop3ServerPortNumber, useSSLForPop3Server, userName, password);
-            seenUids = new List<string>();
-            AllEmails = new ObservableCollection<MessageEntity>();
+                bool boolValue = false;
+                if (string.IsNullOrEmpty(currentServerSettings.UseSSLForPop3Server) == false)
+                    boolValue = bool.Parse(currentServerSettings.UseSSLForPop3Server);
+                UseSSLForPop3Server = boolValue;
 
-            emailHelper.FetchUnseenMessages(seenUids, AllEmails);
-            LastUpdatedOn = "Last updated on: " + DateTime.Now.ToString();
+                if (string.IsNullOrEmpty(currentServerSettings.SaveCopyInServer) == false)
+                    boolValue = bool.Parse(currentServerSettings.SaveCopyInServer);
+                SaveCopyInServer = boolValue;
 
-            NewMailCheckerTimer.Start();
+                UserName = currentServerSettings.UserName;
+                Password = currentServerSettings.Password;
+
+                if (string.IsNullOrEmpty(currentServerSettings.EnforceCheckMailFirst) == false)
+                    boolValue = bool.Parse(currentServerSettings.EnforceCheckMailFirst);
+
+                EnforceCheckMailFirst = boolValue;
+                SMTPServer = currentServerSettings.SMTPServer;
+                SMTPServerPortNumber = currentServerSettings.SMTPServerPortNumber;
+
+                if (string.IsNullOrEmpty(currentServerSettings.UseSSLForSMTPServer) == false)
+                    boolValue = bool.Parse(currentServerSettings.UseSSLForSMTPServer);
+
+                UseSSLForSMTPServer = boolValue;
+                AlarmFilePath = currentServerSettings.AlarmFilePath;
+                AlertFilePath = currentServerSettings.AlertFilePath;
+                EmailCheckInterval = currentServerSettings.EmailCheckInterval;
+                RecordCompareTime = currentServerSettings.RecordCompareTime;
+                AcknowledgementWaitingTime = currentServerSettings.AcknowledgementWaitingTime;
+                LogFilePath = currentServerSettings.LogFilePath;
+
+                if (string.IsNullOrEmpty(currentServerSettings.SendEmailWhenAlarmInitiated) == false)
+                    boolValue = bool.Parse(currentServerSettings.SendEmailWhenAlarmInitiated);
+                SendEmailWhenAlarmInitiated = boolValue;
+
+                EmailAddresses = currentServerSettings.EmailAddresses;
+
+                NewMailCheckerTimer.Tick += NewMailCheckerTimer_Tick;
+                NewMailCheckerTimer.Interval = new TimeSpan(0, 0, 0, 0, int.Parse(emailCheckInterval));
+
+                SaveServerSettingsCommand = new RelayCommand(new Action<object>(SaveServerSettings));
+                CancelServerSettingsCommand = new RelayCommand(new Action<object>(CancelServerSettings));
+
+                emailHelper = new EmailHelper.EmailHelper();
+
+                emailHelper.InitializePop3Client(pop3Server, Pop3ServerPortNumber, useSSLForPop3Server, userName, password);
+                seenUids = new List<string>();
+                AllEmails = new ObservableCollection<MessageEntity>();
+
+                emailHelper.FetchUnseenMessages(seenUids, AllEmails);
+                LastUpdatedOn = "Last updated on: " + DateTime.Now.ToString();
+
+                //Starting timer for checking new mail
+                LogHelper.WriteMessage("Starting timer for checking new mail with interval of :" + emailCheckInterval);
+                NewMailCheckerTimer.Start();
+            }
+            catch (Exception exception)
+            {
+                LogHelper.WriteError("EmailServerSettingViewModel", exception);
+                throw;
+            }
+        }
+
+        private void ReadServerSettings()
+        {
+            try
+            {
+                string settingFilePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\ServerSettings.xml";
+                XmlSerializer x = new XmlSerializer(typeof(ServerSettings));
+                string xmlData = File.ReadAllText(settingFilePath);
+                //string xmlData = File.ReadAllText(@"C:\Users\Balram\Documents\Visual Studio 2013\Projects\EmailChecker\EmailChecker\ServerSettings.xml");
+                currentServerSettings = (ServerSettings)x.Deserialize(new StringReader(xmlData));
+            }
+            catch (Exception exception)
+            {
+                LogHelper.WriteError("ReadServerSettings", exception);
+                throw;
+            }
         }
 
 
         void NewMailCheckerTimer_Tick(object sender, EventArgs e)
         {
-            //CheckNewMail();
-            emailHelper.FetchUnseenMessages(seenUids, AllEmails);
-            LastUpdatedOn = "Last updated on: " + DateTime.Now.ToString();
+            try
+            {
+                //CheckNewMail();
+                LogHelper.WriteMessage("Checking for new mail on server...");
+                emailHelper.FetchUnseenMessages(seenUids, AllEmails);
+                LastUpdatedOn = "Last updated on: " + DateTime.Now.ToString();
+            }
+            catch (Exception exception)
+            {
+                LogHelper.WriteError("NewMailCheckerTimer_Tick", exception);
+                throw;
+            }
         }
 
         #endregion
@@ -303,31 +399,76 @@ namespace EmailChecker.ViewModel
 
         public void SaveServerSettings(object input)
         {
-            Properties.Server.Default.Pop3Server = Pop3Server;
+            try
+            {
+                LogHelper.WriteMessage("Saving server settings to file..");
 
-            Properties.Server.Default.Pop3ServerPortNumber = Pop3ServerPortNumber;
-            Properties.Server.Default.UseSSLForPop3Server = UseSSLForPop3Server;
-            Properties.Server.Default.SaveCopyInServer = SaveCopyInServer;
-            Properties.Server.Default.UserName = UserName;
-            Properties.Server.Default.Password = Password;
-            Properties.Server.Default.EnforceCheckMailFirst = EnforceCheckMailFirst;
-            Properties.Server.Default.SMTPServer = SMTPServer;
-            Properties.Server.Default.SMTPServerPortNumber = SMTPServerPortNumber;
-            Properties.Server.Default.UseSSLForSMTPServer = UseSSLForSMTPServer;
-            Properties.Server.Default.AlarmFilePath = AlarmFilePath;
-            Properties.Server.Default.AlertFilePath = AlertFilePath;
-            Properties.Server.Default.EmailCheckInterval = EmailCheckInterval;
-            Properties.Server.Default.RecordCompareTime = RecordCompareTime;
-            Properties.Server.Default.AcknowledgementWaitingTime = AcknowledgementWaitingTime;
-            Properties.Server.Default.LogFilePath = LogFilePath;
-            Properties.Server.Default.SendEmailWhenAlarmInitiated = SendEmailWhenAlarmInitiated;
-            Properties.Server.Default.EmailAddresses = EmailAddresses;
+                bool hasServerDetailsChanged = currentServerSettings.Pop3ServerPortNumber != Pop3ServerPortNumber ||
+                                               currentServerSettings.Pop3ServerPortNumber != Pop3ServerPortNumber ||
+                                               currentServerSettings.UseSSLForPop3Server != UseSSLForPop3Server.ToString() ||
+                                               currentServerSettings.UserName != UserName ||
+                                               currentServerSettings.Password != Password;
 
-            Properties.Server.Default.Save();
+                currentServerSettings.Pop3Server = Pop3Server;
+                currentServerSettings.Pop3ServerPortNumber = Pop3ServerPortNumber;
+                currentServerSettings.UseSSLForPop3Server = UseSSLForPop3Server.ToString();
+                currentServerSettings.SaveCopyInServer = SaveCopyInServer.ToString();
+                currentServerSettings.UserName = UserName;
+                currentServerSettings.Password = Password;
+                currentServerSettings.EnforceCheckMailFirst = EnforceCheckMailFirst.ToString();
+                currentServerSettings.SMTPServer = SMTPServer;
+                currentServerSettings.SMTPServerPortNumber = SMTPServerPortNumber;
+                currentServerSettings.UseSSLForSMTPServer = UseSSLForSMTPServer.ToString();
+                currentServerSettings.AlarmFilePath = AlarmFilePath;
+                currentServerSettings.AlertFilePath = AlertFilePath;
+                currentServerSettings.EmailCheckInterval = EmailCheckInterval;
+                currentServerSettings.RecordCompareTime = RecordCompareTime;
+                currentServerSettings.AcknowledgementWaitingTime = AcknowledgementWaitingTime;
+                currentServerSettings.LogFilePath = LogFilePath;
+                currentServerSettings.SendEmailWhenAlarmInitiated = SendEmailWhenAlarmInitiated.ToString();
+                currentServerSettings.EmailAddresses = EmailAddresses;
 
-            emailHelper.InitializePop3Client(Pop3Server,Pop3ServerPortNumber, UseSSLForPop3Server, UserName, Password);
+                SaveServerSettingsToXML();
+                LogHelper.WriteMessage("Settings saved.");
 
-            MessageBox.Show("Settings updated!", "Email Checker", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (hasServerDetailsChanged)
+                {
+                    LogHelper.WriteMessage("Server details has changed. Reconnecting to server...");
+                    emailHelper.InitializePop3Client(Pop3Server, Pop3ServerPortNumber, UseSSLForPop3Server, UserName,
+                        Password);
+                }
+
+                MessageBox.Show("Settings updated!", "Email Checker", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            }
+            catch (Exception exception)
+            {
+                LogHelper.WriteError("SaveServerSettings", exception);
+                throw;
+            }
+        }
+
+        public void CancelServerSettings(object input)
+        {
+            ShowSettingDialog = !ShowSettingDialog;
+        }
+
+        private void SaveServerSettingsToXML()
+        {
+            try
+            {
+                string settingFilePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\ServerSettings.xml";
+                LogHelper.WriteMessage("Setting file name: " + settingFilePath);
+                XmlSerializer x = new XmlSerializer(currentServerSettings.GetType());
+                System.IO.StreamWriter file = new System.IO.StreamWriter(settingFilePath);
+                x.Serialize(file, currentServerSettings);
+                file.Close();
+            }
+            catch (Exception exception)
+            {
+                LogHelper.WriteError("SaveServerSettingsToXML", exception);
+                throw;
+            }
         }
         #endregion
     }

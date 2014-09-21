@@ -49,28 +49,28 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Pop3 Server:" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="0"/>
-                <TextBox x:Name="txtPop3Server" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1" Width="150" Text="{Binding Pop3Server}"/>
+                <TextBox x:Name="txtPop3Server" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1" Width="200" Text="{Binding Pop3Server}"/>
                 <TextBlock Text="Port Number:" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="0"/>
                 <TextBox x:Name="txtPortNumber" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="1" Width="50" Text="{Binding Pop3ServerPortNumber}"/>
                 <CheckBox x:Name="cbUseSslCheckBox" Content="Use SSL" Grid.Row="2" Grid.Column="1" IsChecked="{Binding UseSSLForPop3Server}"/>
                 <CheckBox x:Name="cbSaveServerCopy" Content="Save a copy to server" Grid.Row="3" Grid.Column="1" IsChecked="{Binding SaveCopyInServer}"/>
                 <TextBlock Text="User Name:" HorizontalAlignment="Right" Grid.Row="4" Grid.Column="0" />
-                <TextBox x:Name="txtUserName" HorizontalAlignment="Left" Grid.Row="4" Grid.Column="1" Width="100" Text="{Binding UserName}"/>
+                <TextBox x:Name="txtUserName" HorizontalAlignment="Left" Grid.Row="4" Grid.Column="1" Width="200" Text="{Binding UserName}"/>
                 <TextBlock Text="Password:" HorizontalAlignment="Right" Grid.Row="5" Grid.Column="0"/>
                 <!--<PasswordBox x:Name="txtPassword"  HorizontalAlignment="Left" Grid.Row="5" Grid.Column="1" Width="100" />-->
                 <TextBox x:Name="txtPassword"  HorizontalAlignment="Left" Grid.Row="5" Grid.Column="1" Width="100" Text="{Binding Password}" />
                 <CheckBox x:Name="cbEnforceCheckMail" Content="Enforce check email first before send mail:" Grid.Row="6" Grid.Column="1" IsChecked="{Binding EnforceCheckMailFirst}"/>
                 <TextBlock Text="SMTP Server:" HorizontalAlignment="Right" Grid.Row="7" Grid.Column="0" />
-                <TextBox x:Name="txtSMTPServer" HorizontalAlignment="Left" Grid.Row="7" Grid.Column="1" Width="150" Text="{Binding SMTPServer}"/>
+                <TextBox x:Name="txtSMTPServer" HorizontalAlignment="Left" Grid.Row="7" Grid.Column="1" Width="200" Text="{Binding SMTPServer}"/>
                 <TextBlock Text="Port Number:" HorizontalAlignment="Right" Grid.Row="8" Grid.Column="0"/>
                 <TextBox x:Name="txtSMTPPortNumber" HorizontalAlignment="Left" Grid.Row="8" Grid.Column="1" Width="50" Text="{Binding SMTPServerPortNumber}"/>
                 <CheckBox x:Name="cbUseSMTPSslCheckBox" Content="Use SSL for SMTP" Grid.Row="9" Grid.Column="1" IsChecked="{Binding UseSSLForSMTPServer}"/>
                 <TextBlock Text="Alarm Sound:" HorizontalAlignment="Right" Grid.Row="10" Grid.Column="0"/>
-                <TextBox x:Name="txtAlarmSound" HorizontalAlignment="Left" Grid.Row="10" Grid.Column="1" Width="150" Text="{Binding AlarmFilePath}" />
+                <TextBox x:Name="txtAlarmSound" HorizontalAlignment="Left" Grid.Row="10" Grid.Column="1" Width="200" Text="{Binding AlarmFilePath}" />
                 <TextBlock Text="Time to check email (ms):" HorizontalAlignment="Right" Grid.Row="11" Grid.Column="0"/>
                 <TextBox x:Name="txtEmailCheckInterval" HorizontalAlignment="Left" Grid.Row="11" Grid.Column="1" Width="50" Text="{Binding EmailCheckInterval}"/>
                 <TextBlock Text="Record Compare Time (ms):" HorizontalAlignment="Right" Grid.Row="12" Grid.Column="0"/>
@@ -78,13 +78,16 @@
                 <TextBlock Text="Acknowledgement Waiting Time (ms):" HorizontalAlignment="Right" Grid.Row="13" Grid.Column="0"/>
                 <TextBox x:Name="txtAcknowledgementWaitingTime" HorizontalAlignment="Left" Grid.Row="13" Grid.Column="1" Width="50" Text="{Binding AcknowledgementWaitingTime}"/>
                 <TextBlock Text="Log File Path:" HorizontalAlignment="Right" Grid.Row="14" Grid.Column="0"/>
-                <TextBox x:Name="txtLogFilePath" HorizontalAlignment="Left" Grid.Row="14" Grid.Column="1" Width="150" Text="{Binding LogFilePath}" />
+                <TextBox x:Name="txtLogFilePath" HorizontalAlignment="Left" Grid.Row="14" Grid.Column="1" Width="200" Text="{Binding LogFilePath}" />
                 <CheckBox x:Name="cbSendEmailWhenAlarmed" Content="Send Email when alarm initaled" Grid.Row="15" Grid.Column="1" IsChecked="{Binding SendEmailWhenAlarmInitiated}"/>
                 <TextBlock Text="Email address (use comma as multiple):" HorizontalAlignment="Right" Grid.Row="16" Grid.Column="0" />
                 <TextBox x:Name="txtEmailAddresses" HorizontalAlignment="Left" Grid.Row="16" Grid.Column="1" Width="250" Text="{Binding EmailAddresses}"/>
                 <TextBlock Text="Alert Sound:" HorizontalAlignment="Right" Grid.Row="18" Grid.Column="0"/>
-                <TextBox x:Name="TxtAlertSoundBox" HorizontalAlignment="Left" Grid.Row="18" Grid.Column="1" Width="150" Text="{Binding AlertFilePath}" />
-                <Button x:Name="Save" Content="Save" Grid.Row="19" Grid.ColumnSpan="2" Width="50" Command="{Binding SaveServerSettingsCommand}"/>
+                <TextBox x:Name="TxtAlertSoundBox" HorizontalAlignment="Left" Grid.Row="18" Grid.Column="1" Width="200" Text="{Binding AlertFilePath}" />
+                <StackPanel Grid.Row="19" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+                <Button x:Name="Save" Content="Save"  Margin="10"  Width="50" Command="{Binding SaveServerSettingsCommand}"/>
+                    <Button x:Name="Cancel" Content="Cancel"   Width="50" Margin="10" Command="{Binding CancelServerSettingsCommand}"/>
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>

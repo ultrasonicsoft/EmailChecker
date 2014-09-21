@@ -12,6 +12,7 @@
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
         <converter:StatusConverter x:Key="StatusConverter"/>
+        <converter:StatusToVisibilityConverter x:Key="StatusToVisibilityConverter"/>
     </Window.Resources>
     <Window.DataContext>
         <viewModel:EmailCheckerViewModel/>
@@ -22,10 +23,10 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Expander x:Name="SettingsExpander"  Header="Server Settings" Grid.Row="0">
+        <Expander x:Name="SettingsExpander"  Header="Server Settings" Grid.Row="0" IsExpanded="{Binding ServerSettings.EmailServerSettingVM.ShowSettingDialog}">
             <ContentPresenter x:Name="CurrentViewContentPresenter" Content="{Binding ServerSettings}"/>
         </Expander>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Source={StaticResource cvsAllEmails}}" AutoGenerateColumns="False">
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Source={StaticResource cvsAllEmails}}" AutoGenerateColumns="False" CanUserAddRows="False" >
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
@@ -36,10 +37,10 @@
                             <Setter Property="Background" Value="Gray"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Status, Converter={StaticResource StatusConverter}}" Value="D">
-                            <Setter Property="Background" Value="CornflowerBlue"/>
+                            <Setter Property="Background" Value="IndianRed"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Status, Converter={StaticResource StatusConverter}}" Value="C">
-                            <Setter Property="Background" Value="Green"/>
+                            <Setter Property="Background" Value="Gray"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
@@ -48,7 +49,14 @@
                 <DataGridTextColumn Header="ID" Binding="{Binding Number}"/>
                 <DataGridTextColumn Header="Time Stamp" Binding="{Binding DateSent}" SortDirection="Descending"/>
                 <DataGridTextColumn Header="Message" Binding="{Binding Body}"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="125"/>
+                <DataGridTemplateColumn Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Click="CheckRecord_Click" Visibility="{Binding Path=Status, Converter={StaticResource StatusToVisibilityConverter}}">Check</Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <StatusBar Grid.Row="2" Height="20">
